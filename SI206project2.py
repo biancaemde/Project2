@@ -44,6 +44,7 @@ def grab_headlines():
     
     for tag in lst:
         headline.append(tag.string)
+        #looks for tags and appends to list
     return headline
 
 
@@ -65,17 +66,20 @@ def get_umsi_data():
     for page in range(13):
         if page == 0:
             url= "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
+        #if first page
+       
         else:
             url= "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page="+'&page='+str(page)
-
+        #if not first page
+        
         html = requests.get(url, headers={'User-Agent': 'SI_CLASS'})
         soup = BeautifulSoup(html.text, 'html.parser')
-        names = soup.find_all('div', {'class': 'field-item even', 'property': 'dc:title'}) 
-        titles = soup.find_all('div', {'class': 'field field-name-field-person-titles field-type-text field-label-hidden'})
+        names = soup.find_all('div', {'class': 'field-item even', 'property': 'dc:title'}) #parsing for names in dict
+        titles = soup.find_all('div', {'class': 'field field-name-field-person-titles field-type-text field-label-hidden'}) #parsing for titles in dict
 
         for number in range(len(names)):
             umsi_titles[names[number].text] = titles[number].text
-    
+        #grabs the number from length then range of numbers and corresponds names with titles
     return umsi_titles
 
 
@@ -88,6 +92,7 @@ def num_students(data):
     for key in data:
         if data[key] == "PhD student":
             count += 1
+            #adds 1 for each phd student in data
     return count
 
 
