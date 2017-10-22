@@ -35,10 +35,16 @@ def find_urls(s):
 ## INPUT: N/A. No input.
 ## Grab the headlines from the "Most Read" section of
 ## http://www.michigandaily.com/section/opinion
-
 def grab_headlines():
-    pass
-    #Your code here
+    base_url = 'http://www.michigandaily.com/section/opinion'
+    r = requests.get(base_url)    
+    soup = BeautifulSoup(r.text, "lxml")
+    headline = []
+    lst = soup.find('ol').find_all('a')
+    
+    for tag in lst:
+        headline.append(tag.string)
+    return headline
 
 
 
@@ -54,12 +60,23 @@ def grab_headlines():
 ## requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
 
 def get_umsi_data():
-    pass
-    #Your code here
+    umsi_titles={}
 
-      
+    for page in range(13):
+        if page == 0:
+            url= "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
+        else:
+            url= "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page="+'&page='+str(page)
 
+        html = requests.get(url, headers={'User-Agent': 'SI_CLASS'})
+        soup = BeautifulSoup(html.text, 'html.parser')
+        names = soup.find_all('div', {'class': 'field-item even', 'property': 'dc:title'}) 
+        titles = soup.find_all('div', {'class': 'field field-name-field-person-titles field-type-text field-label-hidden'})
 
+        for number in range(len(names)):
+            umsi_titles[names[number].text] = titles[number].text
+    
+    return umsi_titles
 
 
 
@@ -67,8 +84,11 @@ def get_umsi_data():
 ## INPUT: The dictionary from get_umsi_data().
 ## OUTPUT: Return number of PhD students in the data.  (Don't forget, I may change the input data)
 def num_students(data):
-    pass
-    #Your code here
+    count = 0
+    for key in data:
+        if data[key] == "PhD student":
+            count += 1
+    return count
 
 
 
